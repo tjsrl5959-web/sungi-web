@@ -313,8 +313,11 @@ justify-content:center;flex-direction:column;z-index:9999;font:20px/1.7 sans-ser
     });
   }
   var hint = document.getElementById("rotate-hint");
-  hint.addEventListener("click", lockLandscape);
-  hint.addEventListener("touchend", function(ev){ ev.preventDefault(); lockLandscape(); }, {passive: false});
+  // 안내막은 한 번 누르면 사라진다 — 자동 회전이 꺼진 폰에서 막이 게임을 영영 가리면
+  // "터치가 안 된다"로 보인다(09-08). 잠금은 시도하되 막은 걷는다.
+  function dismiss(ev){ if (ev) ev.preventDefault(); lockLandscape(); hint.style.display = "none"; hint.style.pointerEvents = "none"; }
+  hint.addEventListener("click", dismiss);
+  hint.addEventListener("touchend", dismiss, {passive: false});
   var once = function(){ lockLandscape(); document.removeEventListener("touchend", once); document.removeEventListener("click", once); };
   document.addEventListener("touchend", once);
   document.addEventListener("click", once);
