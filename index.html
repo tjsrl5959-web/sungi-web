@@ -322,6 +322,35 @@ justify-content:center;flex-direction:column;z-index:9999;font:20px/1.7 sans-ser
   document.addEventListener("touchend", once);
   document.addEventListener("click", once);
 })();
+// 터치 계기 + 자동 대체(09-08 대표 "아직 터치가 안 되네"): 브라우저가 받은 손가락 수를 세고,
+// 게임(파이썬)이 받은 수(window.__pyTouches)가 두 번째 두드림 뒤에도 안 오르면 그때부터
+// 손가락을 캔버스의 마우스 신호로 바꿔 넣는다. 게임 화면 위 "터치 a/b" 가 그 두 수다.
+(function(){
+  var fallback = false, before = 0;
+  window.__jsTouches = 0; window.__pyTouches = 0; window.__touchFallback = false;
+  function cv(){ return document.querySelector("canvas"); }
+  function synth(type, t){
+    var c = cv(); if (!c || !t) return;
+    var ev = new MouseEvent(type, {bubbles: true, cancelable: true, clientX: t.clientX, clientY: t.clientY,
+                                   screenX: t.screenX, screenY: t.screenY, button: 0,
+                                   buttons: (type === "mouseup" || type === "click") ? 0 : 1});
+    c.dispatchEvent(ev);
+  }
+  document.addEventListener("touchstart", function(e){
+    window.__jsTouches++; before = window.__pyTouches;
+    if (fallback) { var t = e.changedTouches[0]; synth("mousemove", t); synth("mousedown", t); }
+  }, {passive: true, capture: true});
+  document.addEventListener("touchmove", function(e){
+    if (fallback) synth("mousemove", e.changedTouches[0]);
+  }, {passive: true, capture: true});
+  document.addEventListener("touchend", function(e){
+    var t = e.changedTouches[0];
+    if (fallback) { synth("mouseup", t); synth("click", t); return; }
+    setTimeout(function(){
+      if (window.__pyTouches === before && window.__jsTouches >= 2) { fallback = true; window.__touchFallback = true; }
+    }, 600);
+  }, {passive: true, capture: true});
+})();
 </script>
 </head>
 
