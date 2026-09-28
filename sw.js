@@ -1,7 +1,7 @@
 // 선기왕국 PWA 서비스 워커 (2026-09-07)
 // 같은 출처(index·꾸러미·워커)는 **네트워크 먼저**, 안 되면 캐시 — 새 판이 곧장 보이고
 // 오프라인이면 마지막 판이 돈다. 런타임(CDN, 판 번호가 주소에 박힘)은 캐시 먼저.
-const CACHE = "sungi-3.36.3-09281520";     // 판 번호 + 굽는 시각 — 새 워커는 옛 캐시를 지운다
+const CACHE = "sungi-3.36.4-09281754";     // 판 번호 + 굽는 시각 — 새 워커는 옛 캐시를 지운다
 const CDN = "https://pygame-web.github.io/";
 const PRECACHE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
